@@ -1,0 +1,295 @@
+---
+title: "Titan FPL Managers Performance Analysis 2022/23 Season"
+author: "Ifechi Mafiana"
+date: "2023-06-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Titan FPL Managers Performance Analysis 2022/23 Season
+**As a passionate Fantasy Premier League manager, analyzing the Titan FPL managers 
+performance for 2022/2023 season was a project that allowed me to showcase my 
+technical, analytical, and statistical skills as a data analyst. Excel, R, and 
+Power BI are some of the tools used for this analysis.**
+
+### **Business task:** What are the factors that contribute to a team's success in FPL using Titan managers league as case study 
+
+### Setting up my environment
+
+```{r set up environment}
+setwd("C:/Users/MrsMavi/Documents/R Programming/Titan")
+```
+
+```{r load packages}
+library(tidyverse)
+library(dplyr)
+library(readxl)
+library(janitor)
+library(psych)
+library(lubridate)
+library(ggplot2)
+
+```
+
+### Collect Data and Upload data
+
+```{r import all Titan FPL managers datasets}
+mavi_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Mavi_Fc")
+whales_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Whales_Fc")
+premium_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Premium_Fc")
+itsnotyou_its_mee <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Itsnotyou_its_Mee")
+expatriate_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Expatriate_FC")
+thragg_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Thragg_FC")
+impeccable_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Impeccable_FC")
+regal_reloaded <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Regal_Reloaded")
+andra_lina <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Andra_Lina")
+spinel_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Spinel_FC")
+king_kiadin <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "King_Kiadin")
+marbie_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Marbie_FC")
+eclipse_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Eclipse_FC")
+team_cuevas <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Team_Cuevas")
+club_de_phabz <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Club_De_Phabz")
+dont_stress_me <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Dont_Stress_Me")
+all_guns_blazing <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "All_Guns_Blazing")
+layla_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Layla_FC")
+ameenify_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Ameenify_FC")
+Wakanda_nino_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Wakanda_Nino_FC")
+star_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Star_FC")
+apollo_xi <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Apollo_XI")
+le_quinze <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Le_Quinze")
+fC_creamthug <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "FC_Creamthug")
+chibest <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Chibest")
+mezzy_united <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "Mezzy_United")
+vasog_fc <- read_excel("Titan_Fpl_Manager_2022_2023.xlsx", sheet = "VASOG_FC")
+
+```
+
+### Add manager and team columns
+```{r add manager and team columns to datasets}
+dataset_names <- c("mavi_fc", "whales_fc", "premium_fc", "itsnotyou_its_mee", "expatriate_fc",
+                   "thragg_fc", "impeccable_fc", "regal_reloaded", "andra_lina", "spinel_fc",
+                   "king_kiadin", "marbie_fc", "eclipse_fc", "team_cuevas", "club_de_phabz",
+                   "dont_stress_me", "all_guns_blazing", "layla_fc", "ameenify_fc",
+                   "Wakanda_nino_fc", "star_fc", "apollo_xi", "le_quinze", "fC_creamthug",
+                   "chibest", "mezzy_united", "vasog_fc")
+
+team_names <- c("Ifechi Mafiana", "Adewale Aderoloye", "Samuel Odunze","El Tunmbs", 
+                "Godsgift Ojukwu", "Nelson Omoike", "Godsblessing Ojukwu", "George Ofuani",
+                "Providee Baba", "Adewuni Samuel", "Kelly Ikpeze", "Lukman Ikhuoriah", "Akuma Ukpo",
+                "Ugochinyereze Akujobi_Emetuche", "Olamide Fabanwo", "Ebere Nwaribe", "Taiwo Ohenhen", 
+                "Maryam Ikhuoriah", "Al_Ameen Ayinde","Keny Elnino", "Precious Oriafoh", "Tochukwu Akaegbusi", 
+                "franklyn Olerum", "Joseph Harry" , "VeeVee", "Chimezie Obasi", "Victor Asogwa")
+
+# Loop through each dataset and add the manager and team columns
+for (i in seq_along(dataset_names)) {
+  dataset_name <- dataset_names[i]
+  dataset <- get(dataset_name)             # Get the dataset by name
+  dataset$Manager <- team_names[i]         # Add the manager column with the corresponding team name
+  dataset$Team <- dataset_name             # Add the team column with the dataset name
+  assign(dataset_name, dataset)            # Assign the modified dataset back to the original name
+}
+```
+
+### Add more columns; experience, game week points difference, and location
+```{r add experience, game week points difference and location columns}
+
+# Create a vector of start years for each manager
+start_years <- c("2018", "2020", "2017", "2012", "2017",
+                 "2021", "2019", "2018", "2021", "2017",
+                 "2020", "2020", "2018", "2019", "2018",
+                 "2019", "2017", "2022", "2020", "2017",
+                 "2017", "2018", "2018", "2017", "2017",
+                 "2022", "2017")
+
+# Calculate the total experience for each manager
+current_year <- as.integer(format(Sys.Date(), "%Y"))
+experience <- current_year - as.integer(start_years)
+
+# Iterate over the dataset names and add the "experience" column to each dataset
+for (i in seq_along(dataset_names)) {
+  dataset_name <- dataset_names[i]
+  dataset <- get(dataset_name)
+  dataset$Experience <-  as.numeric(experience)[i]
+  assign(dataset_name, dataset)
+}
+
+# Function to calculate GWP_diff and return the updated dataset
+calculate_GWP_diff <- function(dataset) {
+  dataset <- dataset %>%
+    mutate(GWP_diff = GWP - lag(GWP))
+  return(dataset)
+}
+
+# Loop through each dataset name
+for (name in dataset_names) {
+  # Get the dataset object based on the name
+  dataset <- get(name)
+  
+  # Calculate GWP_diff and update the dataset
+  dataset <- calculate_GWP_diff(dataset)
+  
+  # Assign the updated dataset back to the original object
+  assign(name, dataset)
+}
+
+# Add Location column to the datasets
+datasets <- list(
+  mavi_fc = "Nigeria",
+  whales_fc = "Barbados",
+  premium_fc = "Nigeria",
+  itsnotyou_its_mee = "Nigeria",
+  expatriate_fc = "Nigeria",
+  thragg_fc = "Nigeria",
+  impeccable_fc = "Nigeria",
+  regal_reloaded = "United Kingdom",
+  andra_lina = "Nigeria",
+  spinel_fc = "Nigeria",
+  king_kiadin = "Nigeria",
+  marbie_fc = "Nigeria",
+  eclipse_fc = "Nigeria",
+  team_cuevas = "Nigeria",
+  club_de_phabz = "Nigeria",
+  dont_stress_me = "Nigeria",
+  all_guns_blazing = "Canada",
+  layla_fc = "Nigeria",
+  ameenify_fc = "Nigeria",
+  Wakanda_nino_fc = "Nigeria",
+  star_fc = "Nigeria",
+  apollo_xi = "Nigeria",
+  le_quinze = "Nigeria",
+  fC_creamthug = "Nigeria",
+  chibest = "United Kingdom",
+  mezzy_united = "Nigeria",
+  vasog_fc = "Nigeria"
+)
+
+# Loop through each dataset name and location
+for (name in names(datasets)) {
+  dataset <- get(name)
+  dataset <- mutate(dataset, Location = datasets[[name]])
+  assign(name, dataset)
+}
+
+# Loop through each dataset name
+for (name in names(datasets)) {
+  dataset <- datasets[[name]]
+  datasets[[name]] <- dataset
+}
+
+# Add Favorite_club column to the datasets
+favorite_clubs <- list(
+  mavi_fc = "Arsenal",
+  whales_fc = "Arsenal",
+  premium_fc = "Chelsea",
+  itsnotyou_its_mee = "Arsenal",
+  expatriate_fc = "Arsenal",
+  thragg_fc = "Arsenal",
+  impeccable_fc = "Arsenal",
+  regal_reloaded = "Arsenal",
+  andra_lina = "Liverpool",
+  spinel_fc = "Arsenal",
+  king_kiadin = "Manchester United",
+  marbie_fc = "Arsenal",
+  eclipse_fc = "Manchester United",
+  team_cuevas = "Arsenal",
+  club_de_phabz = "Chelsea",
+  dont_stress_me = "Arsenal",
+  all_guns_blazing = "Chelsea",
+  layla_fc = "Liverpool",
+  ameenify_fc = "Chelsea",
+  Wakanda_nino_fc = "Liverpool",
+  star_fc = "Chelsea",
+  apollo_xi = "Nil",
+  le_quinze = "Arsenal",
+  fC_creamthug = "Chelsea",
+  chibest = "Chelsea",
+  mezzy_united = "Manchester United",
+  vasog_fc = "Arsenal"
+)
+
+# Loop through each dataset name and Favorite_club
+for (name in names(favorite_clubs)) {
+  dataset <- get(name)
+  dataset <- mutate(dataset, Favorite_club = favorite_clubs[[name]])
+  assign(name, dataset)
+}
+```
+
+### Merge datasets
+```{r merge managers datasets into one}
+merged_data <- bind_rows(mavi_fc, whales_fc, premium_fc, itsnotyou_its_mee, expatriate_fc,
+                     thragg_fc, impeccable_fc, regal_reloaded, andra_lina, spinel_fc,
+                     king_kiadin, marbie_fc, eclipse_fc, team_cuevas, club_de_phabz,
+                     dont_stress_me, all_guns_blazing, layla_fc, ameenify_fc,
+                     Wakanda_nino_fc, star_fc, apollo_xi, le_quinze, fC_creamthug,
+                     chibest, mezzy_united, vasog_fc)
+```
+
+### Remove "GW" prefix from the values in the "GW" column
+```{r remove GW prefix from column values in GW column}
+merged_data$GW <- as.numeric(gsub("GW", "", merged_data$GW))
+```
+
+### Remove column "#" 
+```{r remove unwanted column}
+titan_data <- merged_data %>%
+  select(-"#")
+```
+
+### Clean the column names
+```{r clean column names}
+colnames(titan_data) <- tolower(colnames(titan_data))
+```
+
+### view merged dataset
+```{r view merged dataset}
+head(titan_data)
+str(titan_data)
+summary(titan_data)
+```
+
+### Qualitative analysis
+
+### Create a table total points of managers 
+```{r table showing total points of managers}
+summary_table <- titan_data %>%
+  group_by(manager) %>%
+  summarize(total_points = sum(gwp) - sum(tc)) %>%
+  arrange(desc(total_points))
+print(summary_table)
+```
+
+### Create a table of the number of managers by country
+```{r table showing managers locations}
+distinct_managers <- titan_data %>%
+  group_by(location) %>%
+  summarise(distinct_managers = n_distinct(manager))
+print(distinct_managers)
+```
+
+### Plot the distribution of distinct managers by location
+```{r}
+distinct_managers <- titan_data %>%
+  group_by(location) %>%
+  summarise(distinct_managers = n_distinct(manager))
+ggplot(distinct_managers, aes(x = "", y = distinct_managers, fill = location)) +
+  geom_bar(stat = "identity") +
+  coord_polar("y", start = 0) +
+  labs(x = NULL, y = NULL, title = "Titan FPL Managers 2022/23: Distribution of Distinct Managers by Location") +
+  theme_void()  
+```
+
+### The titan dataset will be saved and imported into Microsoft Power BI to create dashboard and reports
+
+### Save data to a CSV file
+```{r save dataset}
+write.csv(titan_data, "C:/Users/MrsMavi/Documents/R Programming/Titan/titan_managers.csv", row.names = FALSE)
+```
+
+
+
+

@@ -53,3 +53,4 @@ managers in the Titan FPL mini-league 2022/23. This suggests that many factors w
 - Usage: Click on any of the managers to view their analytics. The visualizations are intereactive and responsive making navigating through the report/dashboard easy. 
 
 - Maintenance and Updates: For the new FPL season 2023/24, I hope to create weekly and monthly perfomance anlaysis report/dashboards.
+- Link to power bi project: https://app.powerbi.com/links/Iz0P9kIqTl?ctid=ae9af32b-72fc-4185-95bb-11103f434ac9&pbi_source=linkShare
